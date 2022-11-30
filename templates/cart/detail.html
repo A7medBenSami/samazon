@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<!-- MainBody Start ============================= -->
+
+<div class="span9">
+	<ul class="breadcrumb">
+		<li><a href="index.html">Home</a> <span class="divider">/</span></li>
+		<li class="active"> SHOPPING CART</li>
+	</ul>
+	{% with total_items=cart|length %}
+	<h3> SHOPPING CART [ <small>{{total_items}} Item{{total_items|pluralize}} </small>]<a href="{% url 'products' %}" class="btn btn-large pull-right"><i class="icon-arrow-left">
+     {% endwith %}
+		{% if cart %}
+	</i> Continue Shopping </a></h3>
+	{% else %}
+	</i> Go Shopping </a></h3>
+	{% endif %}
+	<hr class="soft" />
+
+	<!-- Cart Start ============================= -->
+
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Product</th>
+				<th>Name</th>
+				<th>Quantity/Update</th>
+				<th>Price</th>
+				<th>Shipping</th>
+				<th>Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in shopcart %}
+			<tr>
+				<td> <img width="60" src="{{item.product.img.url}}" alt="" /></td>
+				<td>{{item.product.name}}</td>
+				<td>
+					<div class="input-append">
+							<form method="post" action="{% url 'cart:cart_add' product.id product.slug %}">
+							{% csrf_token %}
+							{{item.update_quantity_form.quantity}}
+							{{item.update_quantity_form.update}}
+							<input type="submit" value="Update" class="btn btn-primary">
+							</form>
+						<a href="{% url 'cart:cart_remove' product.id product.slug %}" class="btn btn-danger" type="button"><i
+								class="icon-white"  style="width: 250px;"> Remove From Cart</i></a>
+					</div>
+				</td>
+
+				<td>{{item.price}}</td>
+				<td>40.00</td>
+				<td>{{item.total_price}}</td>
+			</tr>
+			{% endfor %}
+
+
+			<tr>
+				<td colspan="6" style="text-align:right">Total Price: </td>
+				<td> {{cart.get_total_price}}</td>
+			</tr>
+			{% if cart.coupon %}
+			<tr>
+				<td colspan="6" style="text-align:right">Total Discount: </td>
+				{% block trans %}
+				{% with code=cart.coupon.code discount=cart.coupon.discount%}
+				<td> {{discount}}</td>
+				{% endwith %}
+				{% endblock trans %}
+    			</tr>
+
+			<tr>
+				<td colspan="6" style="text-align:right"><strong>TOTAL AFTER DISCOUNT </strong></td>
+				<td class="label label-important" style="display:block"> <strong>
+						{{cart.get_total_price_after_discount|floatformat:"3"}} </strong></td>
+			</tr>
+
+
+
+
+
+			{% else %}
+			<tr>
+				<td colspan="4" style="width:100%;text-align:center;">there is no product !</td>
+			</tr>
+			{% endif %}
+
+		</tbody>
+	</table>
+
+	<!-- cart end ============================= -->
+
+
+	<!-- VOUCHERS Start ============================= -->
+	{% if cart %}
+	<form class="form-horizontal" action="{% url 'coupons:apply' %}" method="post">
+		{% csrf_token %}
+		{{coupon_apply_form}}
+		<button type="submit" class="btn"> ADD </button>
+	</form>
+	<a href="{% url 'orders:order_create' %}" class="btn btn-large pull-right">Next <i class="icon-arrow-right"></i></a>
+	{% endif %}
+</div>
+</div>
+</div>
+</div>
+<!-- MainBody End ============================= -->
+
+
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<!-- MainBody Start ============================= -->
+
+<div class="span9">
+	<ul class="breadcrumb">
+		<li><a href="index.html">Home</a> <span class="divider">/</span></li>
+		<li class="active"> SHOPPING CART</li>
+	</ul>
+                                        {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{message.tags}}" role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+	{% with total_items=cart|length %}
+	<h3> SHOPPING CART [ <small>{{total_items}} Item{{total_items|pluralize}} </small>]<a href="{% url 'products' %}" class="btn btn-large pull-right"><i class="icon-arrow-left">
+     {% endwith %}
+		{% if shopcart %}
+	</i> Continue Shopping </a></h3>
+	{% else %}
+	</i> Go Shopping </a></h3>
+	{% endif %}
+	<hr class="soft" />
+
+	<!-- Cart Start ============================= -->
+
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Product</th>
+				<th>Name</th>
+				<th>Quantity/Update</th>
+				<th>Price</th>
+				<th>Shipping</th>
+				<th>Total</th>
+			</tr>
+		</thead>
+		<tbody>
+        {% if shopcart %}
+			{% for rs in shopcart %}
+			<tr>
+				<td >
+                                        {% if rs.variant.image_id  > 0 %}
+                                            <img src="{{rs.variant.image }}" alt="" style="height: 100px;">
+                                        {% else %}
+                                            <img src="{{rs.product.image.url}}" alt="" style="height: 100px;">
+                                        {% endif %}
+                </td>
+
+				<td>{{rs.product.name}} ( {{ rs.variant.size }}  &  {{ rs.variant.color }} )</td>
+				<td>
+                   <h5  > {{rs.quantity}}</h5>
+							<form method="post" action="">
+							{% csrf_token %}
+							{{rs.update_quantity_form.quantity}}
+							{{rs.update_quantity_form.update}}
+							<input type="submit" value="Update" class="btn btn-primary">
+							</form>
+					<div class="input-append">
+						<a href="/order/deletefromcart/{{ rs.id }}" onclick="return confirm('Delete ! Are you sure?')" class="btn btn-danger" type="button"><i
+								class="icon-white"  style="width: 250px;"> Remove From Cart</i></a>
+					</div>
+
+				</td>
+
+				<td>
+                    {% if rs.product.variant == 'None' %}
+                        {{ rs.product.price }}
+                    {% else %}
+                        {{ rs.variant.price }}
+                    {% endif %}
+                </td>
+				<td>Free Shipping</td>
+				<td>
+                    {% if rs.product.variant == 'None' %}
+                        {{ rs.total_price }}
+                    {% else %}
+                        {{ rs.varamount }}
+                    {% endif %}
+                </td>
+			</tr>
+			{% endfor %}
+
+
+			<tr>
+				<td colspan="6" style="text-align:right">Total Price: </td>
+				<td>
+                    {{ total}}
+                </td>
+			</tr>
+			<tr>
+            {% if shopcart.coupon %}
+				<td colspan="6" style="text-align:right">Total Discount: </td>
+				{% block trans %}
+				{% with code=rs.coupon.code discount=rs.coupon.discount%}
+				<td> {{discount}}</td>
+				{% endwith %}
+				{% endblock trans %}
+    			</tr>
+
+			<tr>
+				<td colspan="6" style="text-align:right"><strong>TOTAL AFTER DISCOUNT </strong></td>
+				<td class="label label-important" style="display:block"> <strong>
+						{{shopcart.get_total_price_after_discount|floatformat:"3"}} </strong></td>
+			</tr>
+                {% endif %}
+
+
+
+
+
+			{% else %}
+			<tr>
+				<td colspan="4" style="width:100%;text-align:center;">there is no product !</td>
+			</tr>
+			{% endif %}
+
+		</tbody>
+	</table>
+
+	<!-- cart end ============================= -->
+
+	<!-- VOUCHERS Start ============================= -->
+	<form class="form-horizontal" action="{% url 'coupons:apply' %}" method="post">
+		{% csrf_token %}
+		{{coupon_apply_form}}
+		<button type="submit" class="btn"> ADD </button>
+	</form>
+        <a href="{% url 'orderproduct' %}" class="btn btn-large pull-right">Next <i class="icon-arrow-right"></i></a>
+</div>
+</div>
+</div>
+</div>
+<!-- MainBody End ============================= -->
+
+
+
+{% endblock %}

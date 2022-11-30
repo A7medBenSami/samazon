@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="span9">
+    <ul class="breadcrumb">
+		<li><a href="index.html">Home</a> <span class="divider">/</span></li>
+		<li class="active">Registration</li>
+    </ul>
+	<h3> User Profile Update</h3>
+	<div class="well">
+	<form class="form-horizontal" method="post" >
+        {% csrf_token %}
+                        <fieldset class="form-group">
+                            {{ user_form.as_p  }}
+                            {{ profile_form.as_p  }}
+                        </fieldset>
+                        <div class="form-group">
+                            <button class="btn btn-large btn-success" type="submit">Update</button>
+                        </div>
+                    </form>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<!-- MainBody End ============================= -->
+
+{% endblock %}

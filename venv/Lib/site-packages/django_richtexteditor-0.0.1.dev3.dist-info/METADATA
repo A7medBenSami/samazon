@@ -1,0 +1,60 @@
+Metadata-Version: 2.1
+Name: django-richtexteditor
+Version: 0.0.1.dev3
+Summary: Django Rich Text Editor with many flavors
+Home-page: https://github.com/cizario/django-richtexteditor/
+Author: Nizar DELLELI
+Author-email: nizar.delleli@gmail.com
+License: BSD 3-Clause
+Download-URL: https://github.com/cizario/django-richtexteditor/
+Project-URL: Tracker, https://github.com/cizario/django-richtexteditor/issues
+Project-URL: Source, https://github.com/cizario/django-richtexteditor/
+Project-URL: Release notes, https://github.com/cizario/django-richtexteditor/releases
+Project-URL: Documentation, https://django-richtexteditor.readthedocs.io/en/latest/
+Keywords: django richtexteditor wysiwyg ckeditor tinymce
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Planning
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 2.0
+Classifier: Framework :: Django :: 2.1
+Classifier: Framework :: Django :: 2.2
+Classifier: Framework :: Django :: 3.0
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: JavaScript
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Browsers
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: User Interfaces
+Classifier: Topic :: Software Development :: Widget Sets
+Classifier: Topic :: Text Editors
+Classifier: Topic :: Text Editors :: Text Processing
+Classifier: Topic :: Text Editors :: Word Processors
+Classifier: Topic :: Text Processing
+Classifier: Topic :: Text Processing :: Filters
+Classifier: Topic :: Text Processing :: Fonts
+Classifier: Topic :: Text Processing :: General
+Classifier: Topic :: Text Processing :: Markup
+Classifier: Topic :: Text Processing :: Markup :: HTML
+Requires-Python: >=3.6
+Description-Content-Type: text/x-rst
+Requires-Dist: Django (>=2.0)
+
+Django Rich Text Editor
+=======================
+
+Under active development ..
+

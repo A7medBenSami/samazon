@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="span9">
+    <div class="alert alert-success" role="alert" style="background-color: rgb(234, 234, 237);color:black">
+        <h4 class="alert-heading">Your Order!</h4>
+        <br>
+        {% for item in cart %}
+       ( {{item.quantity}} ) x {{item.product.name}}
+        <br>
+        {% endfor %}
+                {% if cart.coupon %}
+                " Discount "
+                ({{cart.coupon.discount}}% off)
+                <span> - ${{cart.get_discount|floatformat:"2"}}</span>
+                {% endif %}
+        <hr>
+
+        <p>Total: {{cart.get_total_price}} EGP</p>
+    </div>
+
+</div>
+
+<h1 class="span9">CheckOut</h1>
+<br>
+
+<div class="span9">
+<form method="post" action="." class="order_form">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Place order</button>
+</form>
+</div>
+</div></div>
+{{iframeURL}}
+<br>
+
+{% endblock %}

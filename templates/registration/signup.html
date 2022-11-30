@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="span9">
+    <ul class="breadcrumb">
+		<li><a href="index.html">Home</a> <span class="divider">/</span></li>
+		<li class="active">Registration</li>
+    </ul>
+                                        {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{message.tags}}" role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+	<h3> Registration</h3>
+	<div class="well">
+    {% if not request.user.is_authenticated %}
+	<form class="form-horizontal" method="post" >
+        {% csrf_token %}
+        {% for field in form %}
+                                <p>
+                                    {{ field.label_tag }}<br>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small style="color: grey">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <p style="color: red">{{ error }}</p>
+                                    {% endfor %}
+                                </p>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-large btn-success">Sign up</button>
+
+	</form>
+    {% else %}
+<a href="{% url 'index' %}" type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title"
+    data-content="And here's some amazing content. It's very engaging. Right?">You Already Logged In !<br> Click To Check Your Profile</a>
+
+{% endif %}
+    <!-- MainBody End ============================= -->
+
+    <!-- MainBody End ============================= -->
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<!-- MainBody End ============================= -->
+
+{% endblock %}

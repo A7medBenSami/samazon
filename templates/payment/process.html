@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title_ %}
+Pay Using Paypal
+{% endblock title_ %}
+
+
+{% block content %}
+<div class="span9">
+    <div class="alert alert-success" role="alert" style="background-color: rgb(234, 234, 237);color:black;">
+        <h4 class="alert-heading">Well done!</h4>
+        <p>Thank you</p>
+        <hr>
+        <p class="mb-0">your order has been successfully completed. your order number is <strong>{ {{order.id}}
+                }</strong></p>
+    </div>
+</div>
+</div>
+</div>
+</table>
+
+<h1 class="span9">CheckOut</h1>
+<br>
+
+<br>
+
+        {{form.render}}
+</div>
+</div>
+</div>
+
+
+{% endblock %}

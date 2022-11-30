@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Invoice</title>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                My Shop
+                            </td>
+
+                            <td>
+                                Invoice #: {{Order.id}}<br>
+                                Created: {{Order.create_at|date:"M d, Y"}}<br>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="information">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>
+                                Addres: {{Order.address}},{{Order.city}}<br>
+                                City: {{order.city}}<br>
+                            </td>
+
+                            <td>
+                                {{Order.user.first_name}}<br>
+                                {{Order.user.last_name}}<br>
+                                {{Order.user.email}}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            {% for item in Order.items.all %}
+
+            <tr class="heading">
+                <td>
+                    Item
+                </td>
+
+                <td>
+                    Price
+                </td>
+                <td>Quantity</td>
+                <td>Shipping</td>
+                <td>Cost</td>
+            </tr>
+
+            <tr class="item" colspan="3">
+                <td>
+                    {{item.product.name}}
+                </td>
+
+                <td>
+                    {{item.price|floatformat:"3"}}
+                </td>
+                <td>{{item.quantity}}</td>
+                <td>40</td>
+                <td>{{item.get_cost|floatformat:"3"}}</td>
+            </tr>
+
+            {% endfor %}
+
+            <tr class="total" colspan="3">
+                <td></td>
+
+                <td>
+                    Total Price After Discount: {{order.get_total_cost}}
+                </td>
+            </tr>
+        </table>
+        <span class="{% if order.paid %}paid{% else %}pending{% endif %}">
+            {% if order.paid %}
+            paid
+            {% else %}
+            not paid
+            {% endif %}
+        </span>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+{% if widget.editor.name == 'ckeditor' %}
+  {% if widget.editor.version == 'v5' %}
+    {% if widget.editor.distribution not in 'classic' %}
+
+      {% if widget.editor.distribution == 'decoupled-document' %}
+        <div class="toolbar-container"></div>
+      {% endif %}
+
+      <div class="editor" data-textarea-id="{{ widget.attrs.id }}"></div>
+
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+<textarea name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+{% if widget.value %}{{ widget.value }}{% endif %}
+</textarea>
