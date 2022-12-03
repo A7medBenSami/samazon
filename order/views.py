@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -17,11 +18,13 @@ from order.models import ShopCart, ShopCartForm, OrderForm, Order, OrderProduct
 from products.models import Category, Product, Variants
 from accounts.models import Profile
 from django.conf import settings
+from accept.payment import *
+
 
 import stripe
 
 stripe.api_key = 'sk_test_51M8qGSGrudnGZQOKK9zBQ5paV7j8sEy1lILyqbd9nj7aSuFSjSgo66Jqwbfn7eQT8QGXrhebyKbfASBJ1YRck1fH00kggt4emO'
-
+API_KEY = "ZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6VXhNaUo5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2libUZ0WlNJNklqRTJOekF3TlRFMU1EVXVNamt4TWpFMUlpd2ljSEp2Wm1sc1pWOXdheUk2TkRVMU1USXdmUS4zTThBQVo5TzZsUTJJdVBFOHczeUxvYVFKWE1IYncyd3RIYVp4b0xCYmM3VWRYRHhtd1pQTzVBeVRfUFpWX3dVcm9ZVVU0UTZyRkFsYlF6aC1sUWZXQQ=="
 
 
 def index(request):
@@ -33,6 +36,8 @@ def addtoshopcart(request, id):
     url = request.META.get('HTTP_REFERER')  # get last url
     current_user = request.user  # Access User Session information
     product = Product.objects.get(pk=id)
+    variant = Variants.objects.get(pk=id)
+
 
     if product.variant != 'None':
         variantid = request.POST.get('variantid')  # from variant add to cart
@@ -52,13 +57,15 @@ def addtoshopcart(request, id):
     if request.method == 'POST':  # if there is a post
         form = ShopCartForm(request.POST)
         if form.is_valid():
-            if control == 1:  # Update  shopcart
-                if product.variant == 'None':
-                    data = ShopCart.objects.get(product_id=id, user_id=current_user.id)
+            if control == 1 :  # Update  shopcart
+                data = ShopCart.objects.get(product_id=id, variant_id=variantid, user_id=current_user.id)
+                if str(data.variant.quantity) > str(data.quantity):
+                    data.quantity += form.cleaned_data['quantity']
+                    data.save()  # save data
+                    messages.success(request, "Shop Cart Updated")
                 else:
-                    data = ShopCart.objects.get(product_id=id, variant_id=variantid, user_id=current_user.id)
-                data.quantity += form.cleaned_data['quantity']
-                data.save()  # save data
+                    messages.success(request, "max")
+
             else:  # Inser to Shopcart
                 data = ShopCart()
                 data.user_id = current_user.id
@@ -66,12 +73,12 @@ def addtoshopcart(request, id):
                 data.variant_id = variantid
                 data.quantity = form.cleaned_data['quantity']
                 data.save()
-        messages.success(request, "Product added to Shopcart ")
+                messages.success(request, "Product added to Shopcart ")
         return HttpResponseRedirect(url)
 
     else:  # if there is no post
-        if control == 1:  # Update  shopcart
-            data = ShopCart.objects.get(product_id=id, user_id=current_user.id)
+        if control == 1 :  # Update  shopcart
+            data = ShopCart.objects.get(variant_id=id, user_id=current_user.id)
             data.quantity += 1
             data.save()  #
         else:  # Inser to Shopcart
@@ -81,7 +88,7 @@ def addtoshopcart(request, id):
             data.quantity = 1
             data.variant_id = None
             data.save()  #
-        messages.success(request, "Product added to Shopcart")
+        messages.success(request, "Shop Cart Updated")
         return HttpResponseRedirect(url)
 
 
@@ -92,7 +99,7 @@ def shopcart(request):
     items = 0
     for rs in shopcart:
         total += rs.variant.price * rs.quantity
-        items = rs.quantity
+        items += rs.quantity
     context = {'shopcart': shopcart, 'total': total,'items':items}
     return render(request, 'shopcart_products.html', context)
 
@@ -153,7 +160,7 @@ def orderproduct(request):
                     product.amount -= rs.quantity
                     product.save()
                 else:
-                    variant = Variants.objects.get(id=rs.product_id)
+                    variant = Variants.objects.get(id=rs.variant_id)
                     variant.quantity -= rs.quantity
                     variant.save()
                 # ************ <> *****************
@@ -179,22 +186,27 @@ def orderproduct(request):
 ###############################################################################
 
 
-stripe.api_key = 'sk_test_51M8qGSGrudnGZQOKK9zBQ5paV7j8sEy1lILyqbd9nj7aSuFSjSgo66Jqwbfn7eQT8QGXrhebyKbfASBJ1YRck1fH00kggt4emO'
 
 
 def checkout_session(request):
     current_user = request.user
     shopcart = ShopCart.objects.filter(user_id=current_user.id)
+    total = 0
+    items = 0
+    id = 0
     for str in shopcart:
+        total += str.variant.price * str.quantity
+        items += str.quantity
+        id += str.variant_id
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {
                     'currency': 'usd',
                     'product_data': {
-                        'name': str.variant_id,
+                        'name': id,
                     },
-                    'unit_amount': int(str.amount) * 100,
+                    'unit_amount': int(total) * 100,
                 },
                 'quantity': 1,
             }],
@@ -297,5 +309,92 @@ def my_webhook_view(request):
 
 def fulfill_order():
     pass
+#############################################################################################################################
+#############################################################################################################################
+def pay_mob(request):
+
+    accept = AcceptAPI(API_KEY)
+    auth_token = accept.retrieve_auth_token()
+    current_user = request.user
+    cart = ShopCart.objects.filter(user_id=current_user.id)
+    #################################################################################
+    total = 0
+    for paymob in cart:
+        total += paymob.variant.price * paymob.quantity
+        OrderData = {
+            "auth_token": auth_token,
+            "delivery_needed": "false",
+            "amount_cents": int(total) * 100,
+            "currency": "EGP",
+            "items": [
+                {
+                    "name": paymob.variant.id,
+                    "amount_cents": int(total) * 100,
+                    "description": paymob.variant.id,
+                    "quantity": paymob.quantity
+                },
+            ],
+
+        }
+
+        order = accept.order_registration(OrderData)
+        print(order)
+
+    #################################################################################
+
+    # Payment Key Request
+    total = 0
+    for paymob in cart:
+        total += paymob.variant.price * paymob.quantity
+        Request = {
+            "auth_token": auth_token,
+            "amount_cents": order.get("amount_cents"),
+            "expiration": 3600,
+            "order_id": order.get("id"),
+            "billing_data": {
+                "apartment": "1",
+                "email": current_user.email,
+                "floor": "42",
+                "first_name": current_user.first_name,
+                "street": current_user.profile.address,
+                "building": "8028",
+                "phone_number": current_user.profile.phone,
+                "shipping_method": "PKG",
+                "postal_code": "01898",
+                "city": current_user.profile.city,
+                "country": "egypt",
+                "last_name": current_user.last_name,
+                "state": "cairo"
+            },
+            "currency": "EGP",
+            "integration_id": 2720564,  # https://accept.paymob.com/portal2/en/PaymentIntegrations
+        }
+
+        payment_token = accept.payment_key_request(Request)
+
+        #################################################################################
+
+        # Payments API [Kiosk, Mobile Wallets , Cash, Pay With Saved Token]
+        print("-- Payments API --")
+
+        identifier = "cash"
+        payment_method = "CASH"
+
+        transaction = accept.pay(identifier, payment_method, payment_token)
+
+        print(transaction)
+
+        #################################################################################
+
+        # Auth-Capture Payment
+
+        #################################################################################
+
+        #################################################################################
+
+        iframeURL = accept.retrieve_iframe("671933", payment_token)
+        return redirect(iframeURL)
+
+
 
 

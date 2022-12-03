@@ -48,7 +48,7 @@
 					{% if pro.new == True %}
 				<li class="span3">
 				  <div class="thumbnail">
-					<a  href="{% url 'product' pro.id pro.slug %}"><img src="{{pro.default_img.url}}" alt="" style="height: 200px;"></a>
+					<a  href="{% url 'product' pro.id pro.slug %}"><img src="{{pro.default_img.url}}" alt="" style="height: 200px ;"></a>
 					<div class="caption">
 					  <h5>{{pro.name}}</h5>
 					  <p> 
@@ -64,6 +64,8 @@
 			  </ul>	
 		</div>
 		</div>
+    			  <a class="left carousel-control" href="#featured" data-slide="prev">‹</a>
+			  <a class="right carousel-control" href="#featured" data-slide="next">›</a>
 	</div>
 </div>
 

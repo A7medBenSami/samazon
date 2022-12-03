@@ -101,7 +101,7 @@ def logout_func(request):
 def signup_form(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() :
             user = form.save(commit=False)
             user.is_active = False
             user.save()
@@ -112,6 +112,8 @@ def signup_form(request):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     form = SignUpForm()
+
+
     context = {'form': form}
     return render(request, 'registration/signup.html', context)
 

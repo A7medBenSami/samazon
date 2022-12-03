@@ -55,6 +55,16 @@
 									<input type="submit" value="Proceed to Payment" class="btn btn-large btn-primary" />
                             </form>
 
+        <form method="post" action="{% url 'pay_mob'  %}">
+            {% csrf_token %}
+            <input type="submit" value="Proceed to Paymob" class="btn btn-large btn-primary" />
+        </form>
+
+
+
+
+
+
     <br>
         <br>
 <hr>

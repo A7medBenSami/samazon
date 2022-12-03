@@ -62,11 +62,10 @@
 							{% csrf_token %}
 							{{rs.update_quantity_form.quantity}}
 							{{rs.update_quantity_form.update}}
-							<input type="submit" value="Update" class="btn btn-primary">
 							</form>
 					<div class="input-append">
 						<a href="/order/deletefromcart/{{ rs.id }}" onclick="return confirm('Delete ! Are you sure?')" class="btn btn-danger" type="button"><i
-								class="icon-white"  style="width: 250px;"> Remove From Cart</i></a>
+								class="icon-white"  style="width: 100%;"> Remove From Cart</i></a>
 					</div>
 
 				</td>
